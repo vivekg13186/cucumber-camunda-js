@@ -30,7 +30,7 @@ npm run test-dmn
  
 ## Acknowledgements
 
-Libraries that you have used in your projects.
+Libraries that you have used in this projects.
  - [camunda 8 node js sdk](https://github.com/camunda/camunda-8-js-sdk)
  - [cucumber js github](https://github.com/cucumber/cucumber-js/tree/main)
  - [cucumber js docs](https://cucumber.io/)
