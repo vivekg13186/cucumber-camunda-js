@@ -1,7 +1,5 @@
 ## Steps
 
-### Camunda related
-
 list of all command BPMN command check out TestBPMN.feature for live example
 
  ```feature

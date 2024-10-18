@@ -21,6 +21,7 @@ npm run test-dmn
 ```
 
 ## Documentations
+- [BPMN process setup](/wiki/ProcessSetup.md)
 - [Enviroment setup](/wiki/Enviroment.md)
 - [BPMN Steps documentation](/wiki/BPMSteps.md)
 - [DMN Steps documentation](/wiki/DMNSteps.md)

@@ -1,7 +1,5 @@
 ## Steps
 
-### Camunda related
-
 list of all command DMN testing commands check out TestDMN.feature for live example
 
 ```feature
