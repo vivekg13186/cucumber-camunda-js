@@ -3,7 +3,9 @@ import { config } from 'dotenv'
 config()
 import { Camunda8 } from '@camunda8/sdk'
 import { expect, should } from 'chai'
+ import {setDefaultTimeout}  from '@cucumber/cucumber';
 
+setDefaultTimeout(60 * 1000);
 const c8 = new Camunda8()
 const zeebe = c8.getZeebeGrpcApiClient()
 const zeebeRest = c8.getZeebeRestClient()
@@ -23,17 +25,22 @@ import { When, Then, Given } from '@cucumber/cucumber';
 
 
 async function searchTaskBySubject(processInstanceKey, taskSubject) {
-
-	var tasks = await tasklist.searchTasks({
-		processInstanceKey: processInstanceKey,
-		includeVariables: [{ name: "taskSubject", alwaysReturnFullValue: true }],
-		taskVariables: [{
-			name: "taskSubject",
-			operator: "eq",
-			value: `"${taskSubject}"`
-		}]
-	});
-	return tasks[0];
+	for (var i = 0; i < 20; i++) {
+		var tasks = await tasklist.searchTasks({
+			processInstanceKey: processInstanceKey,
+			includeVariables: [{ name: "taskSubject", alwaysReturnFullValue: true }],
+			taskVariables: [{
+				name: "taskSubject",
+				operator: "eq",
+				value: `"${taskSubject}"`
+			}]
+		});
+		if (tasks&& tasks.length > 0) {
+			return tasks[0]
+		} else {
+			await sleep(1000);
+		}
+	}
 }
 Given("start process with input {string} using process id {string}", async function (inputJSON, processId) {
 	var response = await zeebe.createProcessInstance({
@@ -87,8 +94,17 @@ Then("find task with subject {string} and complete task with {string}", async fu
 })
 
 Then("verify is process status is {string}", async function (status) {
-	var process = await operate.getProcessInstance(this.processInstanceKey);
-	console.log('RESPONSE:', "getProcessInstance", process);
+   var process ={};
+	for(var i=0;i<20;i++){
+		var process = await operate.getProcessInstance(this.processInstanceKey);
+		console.log('RESPONSE:', "getProcessInstance", process);
+		if(process.state == status){
+			break;
+		}else{
+			await sleep(1000);
+		}
+	}
+	
 	expect(process.state).to.equal(status);
 
 })

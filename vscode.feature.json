@@ -1,0 +1,18 @@
+{
+ 
+	"Given deploy bpmn file": {
+		"prefix": ["deploy","given"],
+		"body": [
+			"Given deploy bpmn file \"filepath.bpmn\"",
+		],
+		"description": "Deploy bpmn file to server"
+	},
+	"Given cancel all active instances": {
+		"prefix": ["cancel","given"],
+		"body": [
+			"Given cancel all active instances",
+		],
+		"description": "cancel all active instances"
+	}
+	 
+}
