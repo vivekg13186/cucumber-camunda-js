@@ -1,6 +1,8 @@
-import { Camunda8 } from "@camunda8/sdk";
 
-import { When, Then, Given } from ('@cucumber/cucumber');
+import { config } from 'dotenv'
+config()
+import { Camunda8 } from '@camunda8/sdk'
+import { expect, should } from 'chai'
 
 const c8 = new Camunda8()
 const zeebe = c8.getZeebeGrpcApiClient()
@@ -9,78 +11,128 @@ const operate = c8.getOperateApiClient()
 const optimize = c8.getOptimizeApiClient()
 const tasklist = c8.getTasklistApiClient()
 const modeler = c8.getModelerApiClient()
-const admin = c8.getAdminApiClient()
+//const admin = c8.getAdminApiClient()
 
-Given("connect to camunda server {string}", async function () {
-	
-});
-
-Given("deploy bpmn process {string}", function () {
-	zeebe.
-});
-
-Given("connected to camunda server", function () {
-
-});
-
-Given("start new process with name {string} and version {string}", function (processName,input) {
-	var self = this;
-	zbc.createProcessInstanceWithResult({
-		bpmnProcessId: processName,
-		variables: JSON.parse(input)
-	})
-		.then(function (data) {
-			console.log(data)
-		})
-});
-
-Then("update task with subject {string} and data {string}", function () {
-
-});
-
-Then("check the status of instance with subject {string} is {string}", function () {
-
-});
-
-When('setup up camunda self managed', function () {
-	this.c8 = new Camunda8({
-		ZEEBE_GRPC_ADDRESS: 'localhost:26500',
-		ZEEBE_REST_ADDRESS: 'http://localhost:8080',
-		ZEEBE_CLIENT_ID: 'zeebe',
-		ZEEBE_CLIENT_SECRET: 'zecret',
-		CAMUNDA_OAUTH_STRATEGY: 'OAUTH',
-		CAMUNDA_OAUTH_URL:
-			'http://localhost:18080/auth/realms/camunda-platform/protocol/openid-connect/token',
-		CAMUNDA_TASKLIST_BASE_URL: 'http://localhost:8082',
-		CAMUNDA_OPERATE_BASE_URL: 'http://localhost:8081',
-		CAMUNDA_OPTIMIZE_BASE_URL: 'http://localhost:8083',
-		CAMUNDA_MODELER_BASE_URL: 'http://localhost:8070/api',
-		CAMUNDA_TENANT_ID: '', // We can override values in the env by passing an empty string value
-		CAMUNDA_SECURE_CONNECTION: false,
+function sleep(ms) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, ms);
 	});
+}
+
+import { When, Then, Given } from '@cucumber/cucumber';
+
+
+async function searchTaskBySubject(processInstanceKey, taskSubject) {
+
+	var tasks = await tasklist.searchTasks({
+		processInstanceKey: processInstanceKey,
+		includeVariables: [{ name: "taskSubject", alwaysReturnFullValue: true }],
+		taskVariables: [{
+			name: "taskSubject",
+			operator: "eq",
+			value: `"${taskSubject}"`
+		}]
+	});
+	return tasks[0];
+}
+Given("start process with input {string} using process id {string}", async function (inputJSON, processId) {
+	var response = await zeebe.createProcessInstance({
+		bpmnProcessId: processId,
+		variables: JSON.parse(inputJSON)
+	});
+	console.log('RESPONSE:', "createProcessInstance", response);
+	expect(response).to.have.property('processInstanceKey')
+	this.processInstanceKey = response.processInstanceKey;
 
 });
 
-When('setup camunda SaaS', function () {
-	this.c8 = new Camunda8({
-		ZEEBE_GRPC_ADDRESS: '5c34c0a7-7f29-4424-8414-125615f7a9b9.syd-1.zeebe.camunda.io:443',
-		ZEEBE_REST_ADDRESS: 'https://syd-1.zeebe.camunda.io/5c34c0a7-7f29-4424-8414-125615f7a9b9',
-		ZEEBE_CLIENT_ID: 'yvvURO9TmBnP3zx4Xd8Ho6apgeiZTjn6',
-		ZEEBE_CLIENT_SECRET: 'iJJu-SHgUtuJTTAMnMLdcb8WGF8s2mHfXhXutEwe8eSbLXn98vUpoxtuLk5uG0en',
-		CAMUNDA_CREDENTIALS_SCOPES: 'Zeebe,Tasklist,Operate,Optimize',
-		CAMUNDA_TASKLIST_BASE_URL: 'https://syd-1.tasklist.camunda.io/5c34c0a7-7f29-4424-8414-125615f7a9b9',
-		CAMUNDA_OPTIMIZE_BASE_URL: 'https://syd-1.optimize.camunda.io/5c34c0a7-7f29-4424-8414-125615f7a9b9',
-		CAMUNDA_OPERATE_BASE_URL: 'https://syd-1.operate.camunda.io/5c34c0a7-7f29-4424-8414-125615f7a9b9',
-		CAMUNDA_OAUTH_URL: 'https://login.cloud.camunda.io/oauth/token',
-		CAMUNDA_AUTH_STRATEGY: 'OAUTH',
-		CAMUNDA_SECURE_CONNECTION: true,
-		CAMUNDA_CONSOLE_CLIENT_ID: 'e-JdgKfJy9hHSXzi',
-		CAMUNDA_CONSOLE_CLIENT_SECRET: 'DT8Pe-ANC6e3Je_ptLyzZvBNS0aFwaIV',
-		CAMUNDA_CONSOLE_BASE_URL: 'https://api.cloud.camunda.io',
-		CAMUNDA_CONSOLE_OAUTH_AUDIENCE: 'api.cloud.camunda.io',
+Given("deploy bpmn file {string}", async function (filepath) {
+	var result = await zeebe.deployResource({ processFilename: filepath });
+	var d = result.deployments[0].process;
+	console.log("DEPLOYED:", d.bpmnProcessId, d.version);
+})
+Given("start process using process id {string}", async function (processId) {
+	await zeebe.createProcessInstance({
+		bpmnProcessId: processId
 	})
+});
+Then("wait {float} sec", { timeout: 600 * 1000 }, async function (delay) {
+	await sleep(delay * 1000);
+});
+
+
+Then("find task with subject {string} and assign to user {string}", async function (taskSubject, assignee) {
+
+	var task = await searchTaskBySubject(this.processInstanceKey, taskSubject);
+	console.log('RESPONSE:', "searchTaskBySubject", task)
+	expect(task).to.be.a('object');
+	var resp = await tasklist.assignTask({
+		taskId: task.id,
+		assignee
+	});
+	console.log('RESPONSE:', "assignTask", resp)
+	task = await searchTaskBySubject(this.processInstanceKey, taskSubject);
+	console.log('RESPONSE:', "searchTaskBySubject", task)
+	expect(task.assignee).to.equal(assignee);
+});
+
+Then("find task with subject {string} and complete task with {string}", async function (taskSubject, data) {
+	var task = await searchTaskBySubject(this.processInstanceKey, taskSubject);
+	console.log('RESPONSE:', "searchTaskBySubject", task)
+	expect(task).to.be.a('object');
+	var resp = await tasklist.completeTask(task.id, JSON.parse(data));
+	console.log('RESPONSE:', "completeTask", resp);
+	expect(resp.taskState).to.equal('COMPLETED');
+
 })
 
-When('say hello', function () {
-	console.log('say hello');
+Then("verify is process status is {string}", async function (status) {
+	var process = await operate.getProcessInstance(this.processInstanceKey);
+	console.log('RESPONSE:', "getProcessInstance", process);
+	expect(process.state).to.equal(status);
+
+})
+
+
+Given("delete all process instances with status {string}", { timeout: 600 * 1000 }, async function (status) {
+	var instances = await operate.searchProcessInstances({
+		filter: {
+			state: status
+		},
+		size: 1000
+	});
+	if (instances.items.length > 0) {
+		for (var i = 0; i < instances.items.length; i++) {
+			var id = instances.items[i].key;
+			await operate.deleteProcessInstance(id);
+			console.log("DELETED:", id);
+		}
+	}
+
+});
+
+Given("cancel all active instances", async function name() {
+	var instances = await operate.searchProcessInstances({
+		filter: {
+			state: 'ACTIVE'
+		},
+		size: 1000
+	});
+	if (instances.items.length > 0) {
+		for (var i = 0; i < instances.items.length; i++) {
+			var id = instances.items[i].key;
+			await zeebe.cancelProcessInstance(id);
+			console.log("CANCELLED:", id);
+		}
+	}
+});
+
+Given("get process instance details {string}", async function (processInstanceKey) {
+	var instances = await operate.searchProcessInstances({
+		filter: {
+			key: processInstanceKey
+		},
+		size: 1000
+	});
+	console.log(instances);
 })

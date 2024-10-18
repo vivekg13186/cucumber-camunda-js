@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx cucumber-js"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "@camunda8/sdk": "^8.6.13",
-    "@cucumber/cucumber": "^10.9.0"
+    "@cucumber/cucumber": "^10.9.0",
+    "chai": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "nanoid": "^5.0.7"
   },
   "devDependencies": {
     "@cucumber/language-server": "^1.6.0"
