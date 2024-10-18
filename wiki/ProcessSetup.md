@@ -1,9 +1,10 @@
 ## Preparing BPMN process for testing
 
-By default camunda provide task subject it is diffcult to distinguis the task in a process.
+ By default, Camunda assigns a generic task subject, which makes it challenging to differentiate tasks within a process.
 
-In order to search for using task,you need to set as variable ***taskSubject***  so the test commands can search for task.
+To enable task searching, you should set a variable named taskSubject so that the test commands can locate the task.
 
-Set a variable as show below,make the subject unique by adding value like case number ,customer numnber etc..
+To do this, set a variable as shown below and make the subject unique by appending values such as case numbers or customer numbers.
 
  ![task subject](./images/tasksubject.png)
+
