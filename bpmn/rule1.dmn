@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="rule1" name="Rule1" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.28.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+  <decision id="Ruletest1" name="DT1">
+    <informationRequirement id="InformationRequirement_1nwmr2o">
+      <requiredInput href="#A" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_1jpv02i">
+      <requiredInput href="#B" />
+    </informationRequirement>
+    <decisionTable id="DecisionTable_02me10w">
+      <input id="Input_1" label="a">
+        <inputExpression id="InputExpression_1" typeRef="number">
+          <text>A</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_175q5i0" label="b">
+        <inputExpression id="LiteralExpression_0khry7r" typeRef="number">
+          <text>B</text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="c" name="C" typeRef="number" />
+      <output id="OutputClause_00uv9m3" name="D" typeRef="string" />
+      <rule id="DecisionRule_1am5xhv">
+        <inputEntry id="UnaryTests_0lc33oh">
+          <text>1</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1s1p960">
+          <text>1</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0xsz7lh">
+          <text>2</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0mjzw05">
+          <text>"OK"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_09uatwp">
+        <inputEntry id="UnaryTests_14nxnry">
+          <text>1</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1c1f3pf">
+          <text>2</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_19yujzw">
+          <text>3</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0b1ol5c">
+          <text>"OKOK"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_13bidm8">
+        <inputEntry id="UnaryTests_0k6mi9s">
+          <text>3</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ywm97t">
+          <text>1</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_006xxql">
+          <text>4</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_130k1dh">
+          <text>"OKOKOK"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData id="A" name="A" />
+  <inputData id="B" name="B" />
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Ruletest1">
+        <dc:Bounds height="80" width="180" x="290" y="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_16ty5y0" dmnElementRef="A">
+        <dc:Bounds height="45" width="125" x="157" y="257" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_06ckfql" dmnElementRef="B">
+        <dc:Bounds height="45" width="125" x="437" y="247" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_15dhei2" dmnElementRef="InformationRequirement_1nwmr2o">
+        <di:waypoint x="220" y="257" />
+        <di:waypoint x="350" y="180" />
+        <di:waypoint x="350" y="160" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_0hliibb" dmnElementRef="InformationRequirement_1jpv02i">
+        <di:waypoint x="500" y="247" />
+        <di:waypoint x="410" y="180" />
+        <di:waypoint x="410" y="160" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

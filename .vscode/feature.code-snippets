@@ -1,0 +1,151 @@
+{
+	"Given start process with input {string} using process id {string}": {
+		"prefix": [
+			"start",
+			"given"
+		],
+		"body": [
+			"Given start process with input \"json input\" using process id \"process id\""
+		],
+		"description": "Start bpm process with input"
+	},
+	"Given start process using process id {string} ": {
+		"prefix": [
+			"start",
+			"given"
+		],
+		"body": [
+			"Given start process using process id \"process id\""
+		],
+		"description": "Start bpm process without input"
+	},
+	"Given deploy bpmn file": {
+		"prefix": [
+			"deploy",
+			"given"
+		],
+		"body": [
+			"Given deploy bpmn file \"filepath.bpmn\""
+		],
+		"description": "Deploy bpmn file to server"
+	},
+	"Then find task with subject {string} and assign to user {string}": {
+		"prefix": [
+			"assign",
+			"then"
+		],
+		"body": [
+			"Then find task with subject \"\" and assign to user \"\""
+		],
+		"description": "assign task to user"
+	},
+	"Then find task with subject {string} and complete task with {string} ": {
+		"prefix": [
+			"complete",
+			"finish",
+			"close",
+			"then"
+		],
+		"body": [
+			"Then find task with subject \"\" and complete task with \"\""
+		],
+		"description": "complete task"
+	},
+	"Then verify is process status is {string} ": {
+		"prefix": [
+			"then",
+			"status",
+			"process"
+		],
+		"body": [
+			"Then verify is process status is \"\""
+		],
+		"description": "verify the status of the process"
+	},
+	"Given delete all process instances with status {string}": {
+		"prefix": [
+			"then",
+			"delete",
+			"process"
+		],
+		"body": [
+			"Given delete all process instances with status \"\""
+		],
+		"description": "delete all process instance"
+	},
+	"Given cancel all active instances":{
+		"prefix": [
+			"then",
+			"cancel",
+			"process"
+		],
+		"body": [
+			"Given cancel all active instances"
+		],
+		"description": "cancel all process instance"
+	},
+	"Then wait {float} sec ":{
+		"prefix": [
+			"then",
+			"wait" ,
+			"debug"
+		],
+		"body": [
+			"Then wait 10 sec "
+		],
+		"description": "wait for n sec"
+	},
+	"Given get process instance details {string} ":{
+		"prefix": [
+			"then",
+			"print",
+			"debug",
+			"process"
+		],
+		"body": [
+			"Given get process instance details \"\""
+		],
+		"description": "print process instance details"
+	},
+	"Given deploy dmn file {string}":{
+		"prefix": [
+			"given",
+			"deploy",
+			"dmn"
+		],
+		"body": [
+			"deploy dmn file \"\""
+		],
+		"description": "deploy dmn"
+	},
+	"Then evaluate decision {string} with input  {string}  and match {string}":{
+		"prefix": [
+			"then",
+			"eval",
+			"dmn"
+		],
+		"body": [
+			"Then evaluate decision  \"\" with input   \"\"  and match  \"\""
+		],
+		"description": "evaluate decision"
+	},
+	"Full decision tabel sample":{
+		"prefix": [
+			"then",
+			"eval",
+			"dmn",
+			"sample"
+		],
+		"body": [
+			"Scenario Outline: some text here",
+        	"    Then evaluate decision \"descisionid\" with input  <input>  and match <output>",
+            "        Examples:",
+            "            | input | output | ",
+            "            | '{\"A\" : 1 , \"B\" : 1 }' | '{\"C\" : 2 , \"D\" : \"OK\"}' |",
+            "            | '{\"A\" : 1 , \"B\" : 2 }' | '{\"C\" : 3 , \"D\" : \"OKOK\"}' |",
+            "            | '{\"A\" : 3 , \"B\" : 1 }' | '{\"C\" : 4 , \"D\" : \"OKOKOK\"}' |",
+            "            | '{\"A\" : 10 , \"B\" : 1 }' | 'null' |",
+		],
+		"description": "evaluate decision"
+	}
+}

@@ -2,8 +2,8 @@
 import { config } from 'dotenv'
 config()
 import { Camunda8 } from '@camunda8/sdk'
-import { expect, should } from 'chai'
- import {setDefaultTimeout}  from '@cucumber/cucumber';
+import { assert, expect, should } from 'chai'
+import { setDefaultTimeout } from '@cucumber/cucumber';
 
 setDefaultTimeout(60 * 1000);
 const c8 = new Camunda8()
@@ -15,6 +15,8 @@ const tasklist = c8.getTasklistApiClient()
 const modeler = c8.getModelerApiClient()
 //const admin = c8.getAdminApiClient()
 
+const AUTO_RETRY_TIMES = 20;
+const AUTO_RETRY_SLEEP_MS =1000;
 function sleep(ms) {
 	return new Promise((resolve) => {
 		setTimeout(resolve, ms);
@@ -25,7 +27,7 @@ import { When, Then, Given } from '@cucumber/cucumber';
 
 
 async function searchTaskBySubject(processInstanceKey, taskSubject) {
-	for (var i = 0; i < 20; i++) {
+	for (var i = 0; i < AUTO_RETRY_TIMES; i++) {
 		var tasks = await tasklist.searchTasks({
 			processInstanceKey: processInstanceKey,
 			includeVariables: [{ name: "taskSubject", alwaysReturnFullValue: true }],
@@ -35,10 +37,10 @@ async function searchTaskBySubject(processInstanceKey, taskSubject) {
 				value: `"${taskSubject}"`
 			}]
 		});
-		if (tasks&& tasks.length > 0) {
+		if (tasks && tasks.length > 0) {
 			return tasks[0]
 		} else {
-			await sleep(1000);
+			await sleep(AUTO_RETRY_SLEEP_MS);
 		}
 	}
 }
@@ -94,17 +96,17 @@ Then("find task with subject {string} and complete task with {string}", async fu
 })
 
 Then("verify is process status is {string}", async function (status) {
-   var process ={};
-	for(var i=0;i<20;i++){
+	var process = {};
+	for (var i = 0; i < AUTO_RETRY_TIMES; i++) {
 		var process = await operate.getProcessInstance(this.processInstanceKey);
 		console.log('RESPONSE:', "getProcessInstance", process);
-		if(process.state == status){
+		if (process.state == status) {
 			break;
-		}else{
-			await sleep(1000);
+		} else {
+			await sleep(AUTO_RETRY_SLEEP_MS);
 		}
 	}
-	
+
 	expect(process.state).to.equal(status);
 
 })
@@ -151,4 +153,23 @@ Given("get process instance details {string}", async function (processInstanceKe
 		size: 1000
 	});
 	console.log(instances);
+})
+
+//DMN
+Given("deploy dmn file {string}", async function (filepath) {
+	var result = await zeebe.deployResource({ processFilename: filepath });
+	var d = result.deployments[0].decision;
+	console.log("DEPLOYED:", d.dmnDecisionId, d.version);
+})
+
+Then("evaluate decision {string} with input  {string}  and match {string}", async function (decisionId,input,output) {
+	console.log(JSON.parse(input))
+	var result = await zeebe.evaluateDecision(
+		{
+			decisionId :decisionId,
+			variables : JSON.parse(input)
+		}
+	);
+	console.log("EVAL ",JSON.stringify(result,null,4));
+	assert.deepEqual(JSON.parse(result.decisionOutput),JSON.parse(output));
 })

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "npx cucumber-js"
+    "test-bpmn": "npx cucumber-js ./features/Example1.feature",
+    "test-dmn": "npx cucumber-js  ./features/Example2.feature"
   },
   "author": "",
   "license": "ISC",
