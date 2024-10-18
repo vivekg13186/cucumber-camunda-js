@@ -4,15 +4,21 @@ A testing framework for Camunda.
 
 ## Quick start
 
- - clone the repo
- - start camunda docker 
- - run command
-    
-    ```bash
-    npm install 
-    npm run test-bpmn
-    npm run test-dmn
-    ```
+Start camunda docker 
+
+Clone the repo
+ ```bash
+ git  clone --depth 1  https://github.com/vivekg13186/cucumber-camunda-js.git
+ ```
+Install project
+```bash
+npm install
+```
+Run test
+ ```bash
+npm run test-bpmn
+npm run test-dmn
+```
 
 ## Documentations
 - [Enviroment setup](/wiki/Enviroment.md)
@@ -20,7 +26,7 @@ A testing framework for Camunda.
 - [DMN Steps documentation](/wiki/DMNSteps.md)
 - [VS code setup](/wiki/Vscode.md)
 
-<!-- Acknowledgments -->
+ 
 ## Acknowledgements
 
 Libraries that you have used in your projects.
