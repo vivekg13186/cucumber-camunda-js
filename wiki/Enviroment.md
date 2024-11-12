@@ -9,3 +9,11 @@ If you use default docker setup provided by the camuda then the ***.env*** file 
 If you are using camunda cloud env refer ***saas.env*** for the values.
 
 
+# Set up local zeebe (without docker)
+
+Download latest version of zeebe from github [https://github.com/camunda/camunda/releases](https://github.com/camunda/camunda/releases)
+
+Checkout the **README.md** file how to install elastic search locally
+
+Run **.bat** files under **bin** folder to start server locally
+

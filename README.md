@@ -2,6 +2,24 @@
 
 A testing framework for Camunda.  
 
+## Features
+
+- Deploy **.bpmn** files
+- Start BPMN process with process id
+- Assign task to users
+- Complete user task
+- Check process status
+- Delete all instances
+- Cancel all task
+- Veriy instance details
+- Deploy **.dmn** files
+- Evaluate decision tables
+- Evaluate descision tables with excel file inputs
+- Support cloud installations
+- Support local docker installations
+- Support local installations without docker
+
+
 ## Quick start
 
 Start camunda docker 

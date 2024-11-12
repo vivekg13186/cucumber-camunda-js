@@ -45,5 +45,14 @@ checkout TestDMN.feature file for more details.
 
 ---
 
+```feature
+Then evaluate decision {string} with input from excel {string} and {string} input columns
+```  
 
- 
+Evaluate a decision with give excel file as input 
+
+Excel file both input and output metioned in each column ,command take number of columns to be considered as inputs.
+    
+![image info](./images/excel.png)
+
+Given excel file columns "A" , "B" are input and "C" , "D" are output 

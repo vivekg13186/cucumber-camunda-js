@@ -4,6 +4,7 @@ config()
 import { Camunda8 } from '@camunda8/sdk'
 import { assert, expect, should } from 'chai'
 import { setDefaultTimeout } from '@cucumber/cucumber';
+import readXlsxFile from 'read-excel-file/node'
 
 setDefaultTimeout(60 * 1000);
 const c8 = new Camunda8()
@@ -16,7 +17,7 @@ const modeler = c8.getModelerApiClient()
 //const admin = c8.getAdminApiClient()
 
 const AUTO_RETRY_TIMES = 20;
-const AUTO_RETRY_SLEEP_MS =1000;
+const AUTO_RETRY_SLEEP_MS = 1000;
 function sleep(ms) {
 	return new Promise((resolve) => {
 		setTimeout(resolve, ms);
@@ -26,6 +27,33 @@ function sleep(ms) {
 import { When, Then, Given } from '@cucumber/cucumber';
 
 
+function convertExcelDataToJSON(rows, input_cols) {
+	var row_objs = [];
+	for (var i = 1; i < rows.length; i++) {
+		var obj = {};
+		for (var c = 0; c < rows[i].length; c++) {
+			obj[rows[0][c]] = rows[i][c];
+		}
+		row_objs.push(obj);
+	}
+	var input_names = rows[0].slice(0, input_cols);
+	var output_names = rows[0].slice(input_cols);
+	var result = [];
+	for (var i = 1; i < row_objs.length; i++) {
+		var inputs = {};
+		for (var j = 0; j < input_names.length; j++) {
+			var key = input_names[j];
+			inputs[key] = row_objs[i][key];
+		}
+		var outputs = {};
+		for (var k = 0; k < output_names.length; k++) {
+			var key = output_names[k];
+			outputs[key] = row_objs[i][key];
+		}
+		result.push({ inputs, outputs })
+	}
+	return result;
+}
 async function searchTaskBySubject(processInstanceKey, taskSubject) {
 	for (var i = 0; i < AUTO_RETRY_TIMES; i++) {
 		var tasks = await tasklist.searchTasks({
@@ -159,17 +187,37 @@ Given("get process instance details {string}", async function (processInstanceKe
 Given("deploy dmn file {string}", async function (filepath) {
 	var result = await zeebe.deployResource({ processFilename: filepath });
 	var d = result.deployments[0].decision;
-	console.log("DEPLOYED:", d.dmnDecisionId, d.version);
+	console.log("DEPLOYED:", d);
 })
 
-Then("evaluate decision {string} with input  {string}  and match {string}", async function (decisionId,input,output) {
+Then("evaluate decision {string} with input  {string}  and match {string}", async function (decisionId, input, output) {
 	console.log(JSON.parse(input))
 	var result = await zeebe.evaluateDecision(
 		{
-			decisionId :decisionId,
-			variables : JSON.parse(input)
+			decisionId: decisionId,
+			variables: JSON.parse(input),
+
 		}
 	);
-	console.log("EVAL ",JSON.stringify(result,null,4));
-	assert.deepEqual(JSON.parse(result.decisionOutput),JSON.parse(output));
+	console.log("EVAL ", JSON.stringify(result, null, 4));
+	assert.deepEqual(JSON.parse(result.decisionOutput), JSON.parse(output));
+})
+
+Then("evaluate decision {string} with input from excel {string} and {string} input columns", async function (decisionId, fileName, input_cols) {
+	var rows = await  readXlsxFile(fileName);
+	var data  = convertExcelDataToJSON(rows,parseInt(input_cols));
+	for(var i=0;i<data.length;i++){
+		var input = data[i].inputs;
+		var output = data[i].outputs
+		var result = await zeebe.evaluateDecision(
+			{
+				decisionId: decisionId,
+				variables: input,
+	
+			}
+		);
+		console.log("EVAL ", JSON.stringify(result, null, 4));
+		assert.deepEqual(JSON.parse(result.decisionOutput), output);
+	}
+	
 })

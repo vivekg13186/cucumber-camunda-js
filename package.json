@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test-bpmn": "npx cucumber-js ./features/Example1.feature",
-    "test-dmn": "npx cucumber-js  ./features/Example2.feature"
+    "test-bpmn": "npx cucumber-js ./features/TestBPMN.feature",
+    "test-dmn": "npx cucumber-js  ./features/TestDMN.feature"
   },
   "author": "",
   "license": "ISC",
@@ -14,7 +14,8 @@
     "@cucumber/cucumber": "^10.9.0",
     "chai": "^5.1.1",
     "dotenv": "^16.4.5",
-    "nanoid": "^5.0.7"
+    "nanoid": "^5.0.7",
+    "read-excel-file": "^5.8.6"
   },
   "devDependencies": {
     "@cucumber/language-server": "^1.6.0"
