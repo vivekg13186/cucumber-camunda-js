@@ -129,6 +129,18 @@
 		],
 		"description": "evaluate decision"
 	},
+	"Then evaluate decision {string} with input from excel {string} and {string} input columns":{
+		"prefix": [
+			"then",
+			"eval",
+			"dmn",
+			"excel"
+		],
+		"body": [
+			"Then evaluate decision \"\" with input from excel \"\" and \"\" input columns"
+		],
+		"description": "evaluate decision"
+	},
 	"Full decision tabel sample":{
 		"prefix": [
 			"then",
